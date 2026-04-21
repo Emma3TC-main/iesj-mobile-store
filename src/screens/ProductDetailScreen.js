@@ -34,14 +34,7 @@ export default function ProductDetailScreen({ product, onAddToCart, onBack }) {
         </Text>
       </View>
       {/* Botones */}
-      onPress=
-      {() => {
-        if (onAddToCart) {
-          onAddToCart(product);
-        } else {
-          console.log("onAddToCart no definido");
-        }
-      }}
+      <CustomButton title="Ir al carrito 🛒" onPress={onGoCart} />
       <CustomButton title="Volver" onPress={onBack} />
     </ScrollView>
   );

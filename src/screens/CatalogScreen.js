@@ -21,18 +21,22 @@ const products = [
   },
 ];
 
-export default function CatalogScreen({ onSelectProduct, onGoCart }) {
+export default function CatalogScreen({ onAddToCart, onGoCart, onViewDetail }) {
   return (
     <View style={styles.container}>
+
       <Text style={styles.title}>Catálogo de Productos</Text>
 
       <FlatList
         data={products}
         keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
-          <ProductCard product={item} onPress={() => onSelectProduct(item)} />
+          <ProductCard
+            product={item}
+            onAddToCart={onAddToCart}
+            onViewDetail={() => onViewDetail(item)}
+          />
         )}
       />
 
