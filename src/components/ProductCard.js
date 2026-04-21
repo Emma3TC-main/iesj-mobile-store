@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import CustomButton from "./CustomButton";
 import styles from "../styles/globalStyles";
 
@@ -9,17 +9,18 @@ export default function ProductCard({ product, onAddToCart, onViewDetail }) {
       <Image source={{ uri: product.image }} style={styles.cardImage} />
 
       <Text style={styles.cardTitle}>{product.name}</Text>
-      <Text>{product.description}</Text>
-      <Text>S/ {product.price}</Text>
+      <Text style={styles.cardDescription}>{product.description}</Text>
+      <Text style={styles.price}>S/ {product.price}</Text>
 
-      <CustomButton
-        title="Ver más"
-        onPress={onViewDetail} // navegación
-      />
+      {/* Botón outline: Ver más */}
+      <TouchableOpacity style={styles.btnOutline} onPress={onViewDetail}>
+        <Text style={styles.btnOutlineText}>Ver más</Text>
+      </TouchableOpacity>
 
+      {/* Botón principal: Agregar al carrito */}
       <CustomButton
-        title="Agregar 🛒"
-        onPress={() => onAddToCart(product)} // lógica
+        title="Agregar al carrito 🛒"
+        onPress={() => onAddToCart(product)}
       />
     </View>
   );

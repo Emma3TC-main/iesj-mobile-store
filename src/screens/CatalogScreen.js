@@ -1,8 +1,8 @@
 import React from "react";
 import { View, FlatList, Text } from "react-native";
 import ProductCard from "../components/ProductCard";
-import CustomButton from "../components/CustomButton";
 import styles from "../styles/globalStyles";
+
 
 const products = [
   {
@@ -21,26 +21,23 @@ const products = [
   },
 ];
 
-export default function CatalogScreen({ onAddToCart, onGoCart, onViewDetail }) {
+export default function CatalogScreen({ onAddToCart, onViewDetail }) {
   return (
     <View style={styles.container}>
-
       <Text style={styles.title}>Catálogo de Productos</Text>
 
       <FlatList
         data={products}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 16 }}
         renderItem={({ item }) => (
           <ProductCard
             product={item}
             onAddToCart={onAddToCart}
-            onViewDetail={() => onViewDetail(item)}
+            onViewDetail={() => onViewDetail && onViewDetail(item)}
           />
         )}
       />
-
-      <CustomButton title="Ver Carrito 🛒" onPress={onGoCart} />
     </View>
   );
 }
