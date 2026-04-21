@@ -1,11 +1,169 @@
 import { StyleSheet } from "react-native";
 
+/* ─────────────────────────────────────────
+   FUENTES: Inter (cargadas en LoginScreen)
+   Inter_400Regular | Inter_600SemiBold | Inter_700Bold
+   ───────────────────────────────────────── */
+
 export default StyleSheet.create({
   /* 🔥 BASE */
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#121212",
+    backgroundColor: "#111214",
+  },
+
+  /* 🔥 BOTTOM NAV */
+  navBar: {
+    flexDirection: "row",
+    backgroundColor: "#1C1E24",
+    borderTopWidth: 1,
+    borderColor: "#2C2F3A",
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+  },
+  navTab: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  navIconBox: {
+    padding: 6,
+    borderRadius: 10,
+    marginBottom: 2,
+  },
+  navIconBoxActive: {
+    backgroundColor: "#1A7CF420",
+  },
+  navIconEmoji: {
+    fontSize: 20,
+  },
+  navLabel: {
+    fontSize: 11,
+    color: "#6A7282",
+    fontFamily: "Inter_400Regular",
+  },
+  navLabelActive: {
+    color: "#1A7CF4",
+    fontFamily: "Inter_600SemiBold",
+  },
+
+  /* ─── LOGIN SCREEN ─── */
+  loginContainer: {
+    flexGrow: 1,
+    backgroundColor: "#111214",
+    paddingHorizontal: 24,
+    paddingTop: 60,
+    paddingBottom: 40,
+  },
+
+  loginIconWrapper: {
+    width: 72,
+    height: 72,
+    borderRadius: 20,
+    backgroundColor: "#1A7CF4",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginBottom: 24,
+  },
+  loginIconEmoji: {
+    fontSize: 34,
+  },
+
+  loginTitle: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 30,
+    color: "#FFFFFF",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  loginSubtitle: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 14,
+    color: "#8A8F9E",
+    textAlign: "center",
+    marginBottom: 32,
+  },
+
+  inputLabel: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
+    color: "#C2C6D2",
+    marginBottom: 8,
+    marginLeft: 2,
+  },
+
+  forgotRow: {
+    alignSelf: "flex-end",
+    marginTop: 4,
+    marginBottom: 24,
+  },
+  forgotText: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
+    color: "#1A7CF4",
+  },
+
+  btnPrimary: {
+    backgroundColor: "#1A7CF4",
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  btnPrimaryText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 16,
+    color: "#FFFFFF",
+  },
+
+  btnSecondary: {
+    backgroundColor: "#1C1E24",
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#2C2F3A",
+    marginBottom: 28,
+  },
+  btnSecondaryText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 16,
+    color: "#FFFFFF",
+  },
+
+  registerRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  registerText: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 14,
+    color: "#8A8F9E",
+  },
+  registerLink: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 14,
+    color: "#1A7CF4",
+  },
+
+  /* ─── INPUT FIELD (con ícono) ─── */
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1C1E24",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#2C2F3A",
+    paddingHorizontal: 14,
+    marginBottom: 16,
+    height: 52,
+  },
+  inputIcon: {
+    fontSize: 16,
+    marginRight: 10,
   },
 
   title: {
@@ -16,29 +174,43 @@ export default StyleSheet.create({
   },
 
   input: {
-    borderWidth: 1,
-    borderColor: "#2C2C2C",
-    padding: 12,
-    marginBottom: 12,
-    borderRadius: 10,
-    backgroundColor: "#1E1E1E",
+    flex: 1,
     color: "#FFFFFF",
+    fontFamily: "Inter_400Regular",
+    fontSize: 15,
   },
 
   /* 🔥 BOTÓN PRINCIPAL */
   button: {
-    backgroundColor: "#007AFF",
-    padding: 16,
-    marginBottom: 10,
-    borderRadius: 14,
+    backgroundColor: "#1A7CF4",
+    padding: 12,
+    marginBottom: 8,
+    borderRadius: 12,
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 8,
   },
 
   buttonText: {
     color: "#FFFFFF",
     fontWeight: "600",
-    fontSize: 16,
+    fontSize: 15,
+  },
+
+  /* 🔥 BOTÓN OUTLINE (Ver más) */
+  btnOutline: {
+    borderWidth: 1,
+    borderColor: "#1A7CF4",
+    padding: 10,
+    marginBottom: 8,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 6,
+  },
+
+  btnOutlineText: {
+    color: "#1A7CF4",
+    fontWeight: "600",
+    fontSize: 14,
   },
 
   /* 🔥 BOTÓN SECUNDARIO */
