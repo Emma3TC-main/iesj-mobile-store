@@ -1,7 +1,16 @@
 import React from "react";
-import { TextInput } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import styles from "../styles/globalStyles";
 
-export default function InputField(props) {
-  return <TextInput style={styles.input} {...props} />;
+export default function InputField({ icon, ...props }) {
+  return (
+    <View style={styles.inputWrapper}>
+      {icon && <Text style={styles.inputIcon}>{icon}</Text>}
+      <TextInput
+        style={styles.input}
+        placeholderTextColor="#5A5F6B"
+        {...props}
+      />
+    </View>
+  );
 }

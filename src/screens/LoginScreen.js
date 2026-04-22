@@ -9,7 +9,6 @@ import {
   Platform,
 } from "react-native";
 import InputField from "../components/InputField";
-import CustomButton from "../components/CustomButton";
 import styles from "../styles/globalStyles";
 
 export default function LoginScreen({ onLogin, onGoRegister }) {
@@ -24,48 +23,92 @@ export default function LoginScreen({ onLogin, onGoRegister }) {
       setErrorVisible(true);
       return;
     }
-
-    // aquí luego llamas API
     onLogin();
   };
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "#111214" }}
     >
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Iniciar sesión</Text>
+      <ScrollView
+        contentContainerStyle={styles.loginContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* ── Ícono superior ── */}
+        <View style={styles.loginIconWrapper}>
+          <Text style={styles.loginIconEmoji}>🛍️</Text>
+        </View>
 
+        {/* ── Encabezado ── */}
+        <Text style={styles.loginTitle}>Bienvenido</Text>
+        <Text style={styles.loginSubtitle}>
+          Inicia sesión para continuar tus compras
+        </Text>
+
+        {/* ── Campo email ── */}
+        <Text style={styles.inputLabel}>Dirección de correo electrónico</Text>
         <InputField
-          placeholder="Correo electrónico"
+          icon="✉️"
+          placeholder="TuEmail@ejemplo.com"
+          placeholderTextColor="#5A5F6B"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
+          autoCapitalize="none"
         />
 
+        {/* ── Campo contraseña ── */}
+        <Text style={styles.inputLabel}>Contraseña</Text>
         <InputField
-          placeholder="Contraseña"
+          icon="🔒"
+          placeholder="Ingresa tu Contraseña"
+          placeholderTextColor="#5A5F6B"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
 
-        <CustomButton title="Ingresar" onPress={handleLogin} />
-
-        <TouchableOpacity onPress={onGoRegister}>
-          <Text style={styles.linkText}>¿No tienes cuenta? Registrarse</Text>
+        {/* ── Forgot password ── */}
+        <TouchableOpacity style={styles.forgotRow}>
+          <Text style={styles.forgotText}>Forgot password?</Text>
         </TouchableOpacity>
 
+        {/* ── Botón principal ── */}
+        <TouchableOpacity style={styles.btnPrimary} onPress={handleLogin}>
+          <Text style={styles.btnPrimaryText}>Iniciar Sesión</Text>
+        </TouchableOpacity>
+
+        {/* ── Botón secundario ── */}
+        <TouchableOpacity
+          style={styles.btnSecondary}
+          onPress={() => onLogin && onLogin("guest")}
+        >
+          <Text style={styles.btnSecondaryText}>Continuar como Invitado</Text>
+        </TouchableOpacity>
+
+        {/* ── Registro ── */}
+        <View style={styles.registerRow}>
+          <Text style={styles.registerText}>Nuevo aquí?  </Text>
+          <TouchableOpacity onPress={onGoRegister}>
+            <Text style={styles.registerLink}>Crear Cuenta</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ── Modal de error ── */}
         <Modal visible={errorVisible} transparent animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Error</Text>
-              <Text>{errorText}</Text>
-              <CustomButton
-                title="Cerrar"
+              <Text style={{ color: "#8A8F9E", fontFamily: "Inter_400Regular" }}>
+                {errorText}
+              </Text>
+              <TouchableOpacity
+                style={[styles.btnPrimary, { marginTop: 16 }]}
                 onPress={() => setErrorVisible(false)}
-              />
+              >
+                <Text style={styles.btnPrimaryText}>Cerrar</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
