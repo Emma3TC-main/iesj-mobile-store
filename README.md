@@ -1,5 +1,3 @@
-Aquí tienes un **README (sección resumen)** listo para tu repositorio, bien estructurado y profesional:
-
 ---
 
 # 📱 iESJ Mobile Store
