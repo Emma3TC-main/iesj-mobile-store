@@ -1,28 +1,36 @@
 import { useEffect, useState } from "react";
+
 import { getProducts } from "../api/productsApi";
 
 export const useProducts = () => {
   const [products, setProducts] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
+  const [error, setError] = useState("");
 
-  const loadProducts = async () => {
+  const fetchProducts = async () => {
     try {
+      setLoading(true);
+
       const data = await getProducts();
 
       setProducts(data);
     } catch (error) {
-      console.log(error);
+      setError("Error cargando productos");
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   return {
     products,
     loading,
+    error,
+    refetch: fetchProducts,
   };
 };

@@ -9,15 +9,15 @@ export const getProducts = async () => {
 };
 
 export const getProductById = async (id) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const product = products.find((item) => item.id === id);
+  return products.find((product) => product.id === id);
+};
 
-      if (!product) {
-        reject("Producto no encontrado");
-      }
+export const getProductsByCategory = async (category) => {
+  return products.filter((product) => product.category === category);
+};
 
-      resolve(product);
-    }, 1000);
-  });
+export const searchProducts = async (query) => {
+  return products.filter((product) =>
+    product.name.toLowerCase().includes(query.toLowerCase()),
+  );
 };
