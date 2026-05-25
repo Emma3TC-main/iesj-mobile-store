@@ -31,13 +31,21 @@ export default function CatalogScreen({ navigation }) {
 
   return (
     <View style={{ padding: 16 }}>
-      <SearchBar value={search} onChangeText={setSearch} />
-
-      <ProductList
-        products={filteredProducts}
-        navigation={navigation}
-        addToCart={addToCart}
+      <SearchBar
+        value={search}
+        onChangeText={setSearch}
+        placeholder="Buscar productos..."
       />
+
+      {filteredProducts.length === 0 ? (
+        <EmptyState message="No hay resultados" />
+      ) : (
+        <ProductList
+          products={filteredProducts}
+          navigation={navigation}
+          addToCart={addToCart}
+        />
+      )}
     </View>
   );
 }

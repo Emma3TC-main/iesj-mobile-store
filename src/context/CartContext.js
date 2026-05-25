@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { getCart, saveCart } from "../services/cartStorage";
+import { useMemo } from "react";
 
 export const CartContext = createContext();
 
@@ -10,6 +11,10 @@ export const CartProvider = ({ children }) => {
     loadCart();
   }, []);
 
+  useEffect(() => {
+    saveCart(cartItems);
+  }, [cartItems]);
+
   const loadCart = async () => {
     const savedCart = await getCart();
 
@@ -18,33 +23,69 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const addToCart = async (product) => {
-    const existingProduct = cartItems.find((item) => item.id === product.id);
+  const addToCart = (product) => {
+    const existingItem = cartItems.find((item) => item.id === product.id);
 
-    let updatedCart = [];
+    if (existingItem) {
+      if (existingItem.quantity >= product.stock) {
+        return;
+      }
 
-    if (existingProduct) {
-      updatedCart = cartItems.map((item) =>
-        item.id === product.id
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          : item,
-      );
-    } else {
-      updatedCart = [
-        ...cartItems,
-        {
-          ...product,
-          quantity: 1,
-        },
-      ];
+      const updatedCart = cartItems.map((item) => {
+        if (item.id === product.id) {
+          return {
+            ...item,
+            quantity: item.quantity + 1,
+          };
+        }
+
+        return item;
+      });
+
+      setCartItems(updatedCart);
+
+      return;
     }
 
-    setCartItems(updatedCart);
+    setCartItems([
+      ...cartItems,
+      {
+        ...product,
+        quantity: 1,
+      },
+    ]);
+  };
 
-    await saveCart(updatedCart);
+  const increaseQuantity = (id) => {
+    const updated = cartItems.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          quantity: item.quantity + 1,
+        };
+      }
+
+      return item;
+    });
+
+    setCartItems(updated);
+  };
+
+  const decreaseQuantity = (id) => {
+    const updated = cartItems
+      .map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            quantity: item.quantity - 1,
+          };
+        }
+
+        return item;
+      })
+      .filter((item) => item.quantity > 0);
+
+    setCartItems(updated);
   };
 
   const removeFromCart = async (productId) => {
@@ -55,10 +96,15 @@ export const CartProvider = ({ children }) => {
     await saveCart(updatedCart);
   };
 
-  const total = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0,
-  );
+  const clearCart = async () => {
+    setCartItems([]);
+
+    await saveCart([]);
+  };
+
+  const total = useMemo(() => {
+    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  }, [cartItems]);
 
   return (
     <CartContext.Provider
@@ -67,6 +113,9 @@ export const CartProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         total,
+        increaseQuantity,
+        decreaseQuantity,
+        clearCart,
       }}
     >
       {children}

@@ -7,6 +7,7 @@ import BottomTabs from "./BottomTabs";
 
 import ProductDetailScreen from "../screens/products/ProductDetailScreen";
 import CheckoutScreen from "../screens/cart/CheckoutScreen";
+import OrdersScreen from "../screens/profile/OrdersScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -29,15 +30,11 @@ export default function AppNavigator() {
             options={{ headerShown: false }}
           />
 
-          <Stack.Screen
-            name="ProductDetail"
-            component={ProductDetailScreen}
-          />
+          <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
 
-          <Stack.Screen
-            name="Checkout"
-            component={CheckoutScreen}
-          />
+          <Stack.Screen name="Checkout" component={CheckoutScreen} />
+
+          <Stack.Screen name="Orders" component={OrdersScreen} />
         </>
       )}
     </Stack.Navigator>

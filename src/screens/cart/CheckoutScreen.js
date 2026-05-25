@@ -3,22 +3,31 @@ import { View, Text, Alert } from "react-native";
 import CustomButton from "../../components/common/CustomButton";
 
 import { useCart } from "../../hooks/useCart";
+import { useOrders } from "../../hooks/useOrders";
 
-import { createOrder } from "../../api/ordersApi";
+import { createOrder as createOrderRequest } from "../../api/ordersApi";
 
 export default function CheckoutScreen({ navigation }) {
-  const { cartItems, total } = useCart();
+  const { cartItems, total, clearCart } = useCart();
+
+  const { createOrder } = useOrders();
 
   const handleCheckout = async () => {
     try {
-      await createOrder({
+      const orderData = {
         items: cartItems,
         total,
-      });
+      };
+
+      await createOrderRequest(orderData);
+
+      createOrder(cartItems, total);
+
+      await clearCart();
 
       Alert.alert("Compra realizada correctamente");
 
-      navigation.navigate("Main");
+      navigation.navigate("Orders");
     } catch (error) {
       Alert.alert("Error en checkout");
     }
@@ -36,7 +45,10 @@ export default function CheckoutScreen({ navigation }) {
         Checkout
       </Text>
 
-      <Text>Productos: {cartItems.length}</Text>
+      <Text>
+        Productos:
+        {cartItems.length}
+      </Text>
 
       <Text>Total: S/ {total}</Text>
 
