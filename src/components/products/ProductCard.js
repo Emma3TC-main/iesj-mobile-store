@@ -1,8 +1,13 @@
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import CustomButton from "../common/CustomButton";
 
 import { useFavorites } from "../../hooks/useFavorites";
+
+import colors from "../../constants/colors";
+import theme from "../../constants/theme";
 
 export default function ProductCard({ product, onPress, onAddToCart }) {
   const { toggleFavorite, isFavorite } = useFavorites();
@@ -11,6 +16,10 @@ export default function ProductCard({ product, onPress, onAddToCart }) {
 
   return (
     <View style={styles.card}>
+      {/* Glow decorativo */}
+      <View style={styles.glowBlue} />
+      <View style={styles.glowPurple} />
+
       <View style={styles.imageContainer}>
         <Pressable
           style={styles.favoriteButton}
@@ -20,57 +29,120 @@ export default function ProductCard({ product, onPress, onAddToCart }) {
         </Pressable>
 
         <Image source={{ uri: product.image }} style={styles.image} />
+
+        {/* Badge decorativo */}
+        <View style={styles.badge}>
+          <MaterialCommunityIcons name="flash" size={13} color={colors.white} />
+
+          <Text style={styles.badgeText}>Premium</Text>
+        </View>
       </View>
 
-      <Text style={styles.name}>{product.name}</Text>
+      <View style={styles.content}>
+        <Text numberOfLines={2} style={styles.name}>
+          {product.name}
+        </Text>
 
-      <Text style={styles.price}>S/ {product.price}</Text>
+        <View style={styles.priceRow}>
+          <Text style={styles.currency}>S/</Text>
 
-      <CustomButton title="Ver detalle" onPress={onPress} />
+          <Text style={styles.price}>{product.price}</Text>
+        </View>
 
-      <CustomButton title="Agregar" onPress={onAddToCart} />
+        <View style={styles.buttons}>
+          <CustomButton
+            title="Ver detalle"
+            onPress={onPress}
+            variant="secondary"
+          />
+
+          <CustomButton title="Agregar" onPress={onAddToCart} />
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
-    padding: 14,
-    marginBottom: 14,
-    borderRadius: 16,
+    backgroundColor: colors.card,
+
+    marginBottom: theme.spacing.lg,
+
+    borderRadius: theme.radius.xl,
+
+    borderWidth: 1,
+    borderColor: colors.border,
+
+    overflow: "hidden",
+
+    position: "relative",
+
+    ...theme.shadow,
+  },
+
+  glowBlue: {
+    position: "absolute",
+
+    width: 180,
+    height: 180,
+
+    borderRadius: 999,
+
+    backgroundColor: colors.glowBlue,
+
+    top: -70,
+    right: -40,
+
+    zIndex: 0,
+  },
+
+  glowPurple: {
+    position: "absolute",
+
+    width: 140,
+    height: 140,
+
+    borderRadius: 999,
+
+    backgroundColor: colors.glowPurple,
+
+    bottom: -50,
+    left: -30,
+
+    zIndex: 0,
   },
 
   imageContainer: {
     position: "relative",
+
+    padding: 20,
   },
 
   favoriteButton: {
     position: "absolute",
-    top: 10,
-    right: 10,
 
-    zIndex: 10,
+    top: 24,
+    right: 24,
 
-    backgroundColor: "rgba(255,255,255,0.9)",
+    zIndex: 20,
 
-    width: 38,
-    height: 38,
+    width: 42,
+    height: 42,
 
-    borderRadius: 19,
+    borderRadius: 999,
 
     justifyContent: "center",
     alignItems: "center",
 
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
+    backgroundColor: "rgba(15,23,42,0.75)",
 
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+
+    backdropFilter: "blur(10px)",
+
+    ...theme.shadow,
   },
 
   favoriteIcon: {
@@ -79,20 +151,82 @@ const styles = StyleSheet.create({
 
   image: {
     width: "100%",
-    height: 180,
-    borderRadius: 12,
+    height: 220,
+
+    borderRadius: theme.radius.lg,
+
+    backgroundColor: colors.surface,
+  },
+
+  badge: {
+    position: "absolute",
+
+    left: 26,
+    bottom: 26,
+
+    flexDirection: "row",
+    alignItems: "center",
+
+    backgroundColor: "rgba(59,130,246,0.88)",
+
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+
+    borderRadius: theme.radius.pill,
+
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
+  },
+
+  badgeText: {
+    color: colors.white,
+
+    fontSize: 12,
+    fontWeight: "700",
+
+    marginLeft: 6,
+  },
+
+  content: {
+    paddingHorizontal: 20,
+    paddingBottom: 22,
   },
 
   name: {
-    fontWeight: "600",
-    fontSize: 16,
+    color: colors.text,
 
-    marginTop: 12,
-    marginBottom: 6,
+    fontSize: 18,
+    fontWeight: "700",
+
+    lineHeight: 28,
+
+    marginBottom: 14,
+  },
+
+  priceRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+
+    marginBottom: 18,
+  },
+
+  currency: {
+    color: colors.primaryLight,
+
+    fontSize: 18,
+    fontWeight: "700",
+
+    marginRight: 4,
   },
 
   price: {
-    fontSize: 15,
-    marginBottom: 12,
+    color: colors.white,
+
+    fontSize: 28,
+    fontWeight: "800",
+  },
+
+  buttons: {
+    gap: 10,
   },
 });

@@ -4,14 +4,23 @@ const colors = {
   primaryDark: "#2563EB",
   primaryLight: "#60A5FA",
 
-  /* BACKGROUND */
-  background: "#0F172A",
+  /* ACCENT */
+  accent: "#8B5CF6",
+  accentLight: "#A78BFA",
+
+  /* BACKGROUNDS */
+  background: "#0B1120",
   surface: "#111827",
-  card: "#1E293B",
+  card: "#172033",
+  cardSecondary: "#1E293B",
+
+  /* RGB / GLOW */
+  glowBlue: "rgba(59,130,246,0.18)",
+  glowPurple: "rgba(139,92,246,0.18)",
 
   /* TEXT */
   text: "#F8FAFC",
-  textSecondary: "#94A3B8",
+  textSecondary: "#CBD5E1",
   textMuted: "#64748B",
 
   /* STATUS */
@@ -20,7 +29,8 @@ const colors = {
   danger: "#EF4444",
 
   /* BORDER */
-  border: "#334155",
+  border: "#243041",
+  borderLight: "#334155",
 
   /* COMMON */
   white: "#FFFFFF",

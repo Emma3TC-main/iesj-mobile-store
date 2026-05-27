@@ -5,15 +5,24 @@ import theme from "../constants/theme";
 
 export default StyleSheet.create({
   /* BASE */
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    padding: theme.spacing.md,
-  },
-
   safeContainer: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.sm,
+  },
+
+  scrollContent: {
+    flexGrow: 1,
+    backgroundColor: colors.background,
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.sm,
+    paddingBottom: 120,
   },
 
   centered: {
@@ -25,7 +34,7 @@ export default StyleSheet.create({
   /* TEXT */
   title: {
     fontSize: theme.typography.title,
-    fontWeight: "700",
+    fontWeight: "800",
     color: colors.text,
     marginBottom: theme.spacing.sm,
   },
@@ -34,11 +43,13 @@ export default StyleSheet.create({
     fontSize: theme.typography.subtitle,
     color: colors.textSecondary,
     marginBottom: theme.spacing.lg,
+    lineHeight: 28,
   },
 
   text: {
     fontSize: theme.typography.body,
-    color: colors.text,
+    color: colors.textSecondary,
+    lineHeight: 24,
   },
 
   muted: {
@@ -48,11 +59,16 @@ export default StyleSheet.create({
   /* CARDS */
   card: {
     backgroundColor: colors.card,
-    borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+
+    borderRadius: theme.radius.lg,
+
+    padding: theme.spacing.lg,
+
+    marginBottom: theme.spacing.lg,
+
     borderWidth: 1,
     borderColor: colors.border,
+
     ...theme.shadow,
   },
 
