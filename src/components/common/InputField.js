@@ -1,6 +1,9 @@
 import { View, TextInput, Text, StyleSheet } from "react-native";
 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import colors from "../../constants/colors";
+import theme from "../../constants/theme";
 
 export default function InputField({
   placeholder,
@@ -11,13 +14,23 @@ export default function InputField({
 }) {
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry}
-      />
+      <View style={[styles.inputWrapper, error && styles.inputError]}>
+        <MaterialCommunityIcons
+          name={secureTextEntry ? "lock-outline" : "text-box-outline"}
+          size={20}
+          color={error ? colors.danger : colors.textMuted}
+          style={styles.icon}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder={placeholder}
+          placeholderTextColor={colors.textMuted}
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secureTextEntry}
+        />
+      </View>
 
       {error && <Text style={styles.error}>{error}</Text>}
     </View>
@@ -26,17 +39,54 @@ export default function InputField({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 14,
+    marginBottom: theme.spacing.md,
   },
-  input: {
+
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+
+    backgroundColor: colors.surface,
+
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 10,
-    padding: 12,
-    backgroundColor: colors.text,
+
+    borderRadius: theme.radius.md,
+
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+
+    overflow: "hidden",
+
+    ...theme.shadow,
   },
+
+  inputError: {
+    borderColor: colors.danger,
+  },
+
+  icon: {
+    marginRight: 12,
+  },
+
+  input: {
+    flex: 1,
+
+    color: colors.text,
+
+    fontSize: theme.typography.body,
+
+    paddingVertical: 14,
+  },
+
   error: {
     color: colors.danger,
-    marginTop: 5,
+
+    marginTop: 8,
+    marginLeft: 4,
+
+    fontSize: theme.typography.caption,
+
+    fontWeight: "600",
   },
 });
