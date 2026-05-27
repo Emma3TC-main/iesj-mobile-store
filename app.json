@@ -1,32 +1,55 @@
 {
   "expo": {
-    "name": "iesj-mobile-store",
+    "name": "iESJ Mobile Store",
     "slug": "iesj-mobile-store",
     "version": "1.0.0",
+
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+
+    "userInterfaceStyle": "dark",
+
+    "scheme": "iesjmobile",
+
+    "icon": "./assets/logo.png",
+
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0B1120"
     },
-    "ios": {
-      "supportsTablet": true
-    },
+
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+
     "android": {
+      "package": "com.iesj.mobile.store",
+
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#0B1120"
       },
+
       "edgeToEdgeEnabled": true
     },
+
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro",
+      "favicon": "./assets/logo.png"
     },
+
+    "extra": {
+      "eas": {
+        "projectId": "fb7077f3-ef08-4471-b806-13317597bb15"
+      }
+    },
+
     "plugins": [
       "expo-font"
-    ]
+    ],
+
+    "experiments": {
+      "typedRoutes": false
+    }
   }
 }
