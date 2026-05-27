@@ -22,7 +22,7 @@ export default function HeroBanner({
 
       {/* Imagen decorativa */}
       <Image
-        source={require("../../../assets/images/hero-gaming.png")}
+        source={require("../../../assets/images/hero_gaming.jpg")}
         style={styles.image}
         resizeMode="cover"
       />
