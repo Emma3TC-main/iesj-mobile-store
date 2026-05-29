@@ -240,19 +240,19 @@ docs/engineering-workflow.md
 
 ---
 
-# 🔗 Recursos del Proyecto
+## 🔗 Enlaces del Proyecto
 
-## 📄 Informe
+* 📄 **Informe en PDF:**
+  https://utpedupe-my.sharepoint.com/:b:/g/personal/u22329385_utp_edu_pe/IQCc_rkXCMPiSbOGelAoHWEcAdREcekwFJoepq2OpIYI8Kc?e=GNLwcQ
 
-[https://docs.google.com/document/d/1kZ79yN3j1kmbYqLxbULizysXXN4UCc29/edit](https://docs.google.com/document/d/1kZ79yN3j1kmbYqLxbULizysXXN4UCc29/edit)
+* 📝 **Informe en Word:**
+  https://utpedupe-my.sharepoint.com/:w:/g/personal/u22329385_utp_edu_pe/IQCIigPowMa-TYmNC9IyiNUJAQ-6cubL381_XOwFe-tEoT8?e=9N80Be
 
-## 🎞️ Presentación
+* 🎞️ **Diapositivas – Avance 2:**
+  https://canva.link/x7hubid7qltk94q
 
-[https://canva.link/rj6k360k4xuvgtd](https://canva.link/rj6k360k4xuvgtd)
-
-## 🎨 Figma
-
-[https://www.figma.com/design/JmgiW06u12Y6goMtHF2vDT/iESJ-Webstore](https://www.figma.com/design/JmgiW06u12Y6goMtHF2vDT/iESJ-Webstore)
+* 🎨 **Prototipo en Figma:**
+  https://www.figma.com/design/JmgiW06u12Y6goMtHF2vDT/iESJ-Webstore?node-id=0-1&t=g4cU7Q0G7vm1JDCp-1
 
 ---
 
