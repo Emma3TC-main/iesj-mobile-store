@@ -1,16 +1,28 @@
 import { View, Text, FlatList, StyleSheet } from "react-native";
 
-import { useCart } from "../../hooks/useCart";
 import CustomButton from "../../components/common/CustomButton";
-import { formatCurrency } from "../../utils/currency";
 import EmptyState from "../../components/common/EmptyState";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 
-// Importación del sistema de diseño unificado
+import { useCart } from "../../hooks/useCart";
+import { formatCurrency } from "../../utils/currency";
+
 import colors from "../../constants/colors";
 import theme from "../../constants/theme";
 
 export default function CartScreen({ navigation }) {
-  const { cartItems, removeFromCart, total } = useCart();
+  const {
+    cartItems,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    total,
+    loadingCart,
+  } = useCart();
+
+  if (loadingCart) {
+    return <LoadingSpinner />;
+  }
 
   if (cartItems.length === 0) {
     return <EmptyState message="Tu carrito está vacío" />;
@@ -18,7 +30,6 @@ export default function CartScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Fondo con diseño decorativo característico */}
       <View style={styles.glowBlue} />
       <View style={styles.glowPurple} />
 
@@ -35,11 +46,23 @@ export default function CartScreen({ navigation }) {
               </Text>
               <Text style={styles.itemQuantity}>
                 {item.quantity} x{" "}
-                <Text style={styles.itemPrice}>S/ {item.price}</Text>
+                <Text style={styles.itemPrice}>
+                  {formatCurrency(item.price)}
+                </Text>
               </Text>
             </View>
 
-            <View style={styles.itemAction}>
+            <View style={styles.quantityActions}>
+              <CustomButton
+                title="−"
+                onPress={() => decreaseQuantity(item.id)}
+                variant="secondary"
+              />
+              <CustomButton
+                title="+"
+                onPress={() => increaseQuantity(item.id)}
+                variant="secondary"
+              />
               <CustomButton
                 title="Eliminar"
                 onPress={() => removeFromCart(item.id)}
@@ -50,7 +73,6 @@ export default function CartScreen({ navigation }) {
         )}
       />
 
-      {/* Resumen del total y checkout */}
       <View style={styles.footer}>
         <View style={styles.totalRow}>
           <Text style={styles.totalLabel}>Total:</Text>
@@ -106,14 +128,10 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     padding: 16,
     marginBottom: theme.spacing.lg || 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "between",
     ...theme.shadow,
   },
   itemInfo: {
-    flex: 1,
-    marginRight: 12,
+    marginBottom: 12,
   },
   itemName: {
     color: colors.text || "#ffffff",
@@ -129,8 +147,10 @@ const styles = StyleSheet.create({
     color: colors.primaryLight || "#3b82f6",
     fontWeight: "600",
   },
-  itemAction: {
-    minWidth: 90,
+  quantityActions: {
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
   },
   footer: {
     backgroundColor: colors.card,

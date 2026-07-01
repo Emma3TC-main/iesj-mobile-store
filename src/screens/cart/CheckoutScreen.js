@@ -4,42 +4,37 @@ import CustomButton from "../../components/common/CustomButton";
 
 import { useCart } from "../../hooks/useCart";
 import { useOrders } from "../../hooks/useOrders";
+import { scheduleOrderNotification } from "../../services/notificationService";
 
-import { createOrder as createOrderRequest } from "../../api/ordersApi";
-
-// Importación del sistema de diseño unificado
 import colors from "../../constants/colors";
 import theme from "../../constants/theme";
 
 export default function CheckoutScreen({ navigation }) {
-  const { cartItems, total, clearCart } = useCart();
+  const { cartItems, total, clearCart, refreshCart } = useCart();
   const { createOrder } = useOrders();
 
   const handleCheckout = async () => {
     try {
-      const orderData = {
-        items: cartItems,
-        total,
-      };
-
-      await createOrderRequest(orderData);
-      createOrder(cartItems, total);
+      const order = await createOrder("PAYPAL_SANDBOX");
       await clearCart();
+      await refreshCart();
+      await scheduleOrderNotification(order.id);
 
       Alert.alert("Compra realizada correctamente");
       navigation.navigate("Orders");
     } catch (error) {
-      Alert.alert("Error en checkout");
+      Alert.alert(
+        "Error en checkout",
+        error.message || "No se pudo completar la compra",
+      );
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Glows decorativos integrados del diseño de la app */}
       <View style={styles.glowBlue} />
       <View style={styles.glowPurple} />
 
-      {/* Tarjeta contenedora del resumen de Checkout */}
       <View style={styles.card}>
         <Text style={styles.title}>Checkout</Text>
 
@@ -55,7 +50,7 @@ export default function CheckoutScreen({ navigation }) {
             <Text style={styles.label}>Total a pagar:</Text>
             <View style={styles.priceRow}>
               <Text style={styles.currency}>S/</Text>
-              <Text style={styles.price}>{total}</Text>
+              <Text style={styles.price}>{total.toFixed(2)}</Text>
             </View>
           </View>
         </View>

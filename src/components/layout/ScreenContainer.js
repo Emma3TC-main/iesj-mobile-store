@@ -5,13 +5,18 @@ import globalStyles from "../../styles/globalStyles";
 export default function ScreenContainer({
   children,
   scrollable = false,
+  style,
+  contentContainerStyle,
 }) {
   if (scrollable) {
     return (
-      <SafeAreaView style={globalStyles.safeContainer}>
+      <SafeAreaView style={[globalStyles.safeContainer, style]}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={globalStyles.scrollContent}
+          contentContainerStyle={[
+            globalStyles.scrollContent,
+            contentContainerStyle,
+          ]}
         >
           {children}
         </ScrollView>
@@ -20,7 +25,7 @@ export default function ScreenContainer({
   }
 
   return (
-    <SafeAreaView style={globalStyles.container}>
+    <SafeAreaView style={[globalStyles.container, style]}>
       {children}
     </SafeAreaView>
   );

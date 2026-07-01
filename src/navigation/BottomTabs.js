@@ -7,6 +7,7 @@ import CatalogScreen from "../screens/products/CatalogScreen";
 import CartScreen from "../screens/cart/CartScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
 import FavoritesScreen from "../screens/favorites/FavoritesScreen";
+import NativeFeaturesScreen from "../screens/native/NativeFeaturesScreen";
 
 // Importación del sistema de diseño unificado de la app
 import colors from "../constants/colors";
@@ -46,11 +47,11 @@ export default function BottomTabs() {
           paddingTop: 6,
           paddingBottom: 6,
         },
-        
+
         // Colores de estado dinámicos
         tabBarActiveTintColor: colors.primaryLight || "#3b82f6",
         tabBarInactiveTintColor: colors.text || "#94a3b8",
-        
+
         // Estilización precisa de las etiquetas de texto
         tabBarLabelStyle: {
           fontSize: 11,
@@ -64,7 +65,7 @@ export default function BottomTabs() {
           justifyContent: "center",
           alignItems: "center",
         },
-        
+
         // Tu lógica exacta de iconos mapeados
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -79,6 +80,8 @@ export default function BottomTabs() {
             iconName = focused ? "person" : "person-outline";
           } else if (route.name === "Favoritos") {
             iconName = focused ? "heart" : "heart-outline";
+          } else if (route.name === "Nativo") {
+            iconName = focused ? "phone-portrait" : "phone-portrait-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -90,6 +93,10 @@ export default function BottomTabs() {
       <Tab.Screen name="Catalogo" component={withSafeArea(CatalogScreen)} />
       <Tab.Screen name="Carrito" component={withSafeArea(CartScreen)} />
       <Tab.Screen name="Favoritos" component={withSafeArea(FavoritesScreen)} />
+      <Tab.Screen
+        name="Nativo"
+        component={withSafeArea(NativeFeaturesScreen)}
+      />
       <Tab.Screen name="Perfil" component={withSafeArea(ProfileScreen)} />
     </Tab.Navigator>
   );
@@ -100,6 +107,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surface || "#0f172a", // Mantiene el color de fondo oscuro unificado durante el desplazamiento
     // Calcula la altura exacta de la barra de estado del celular + 16px de separación estética premium
-    paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight || 24) + 16 : 16,
+    paddingTop:
+      Platform.OS === "android" ? (StatusBar.currentHeight || 24) + 16 : 16,
   },
 });

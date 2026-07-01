@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { Alert, View, StyleSheet } from "react-native";
 
 import { useProducts } from "../../hooks/useProducts";
 import { useCart } from "../../hooks/useCart";
@@ -9,17 +9,34 @@ import ProductList from "../../components/products/ProductList";
 import EmptyState from "../../components/common/EmptyState";
 import SearchBar from "../../components/common/SearchBar";
 
-// Importación del sistema de diseño unificado
 import colors from "../../constants/colors";
-import theme from "../../constants/theme";
 
 export default function CatalogScreen({ navigation }) {
-  const { products, loading } = useProducts();
+  const { products, loading, error } = useProducts();
   const { addToCart } = useCart();
   const [search, setSearch] = useState("");
 
+  const handleAddToCart = async (product) => {
+    try {
+      await addToCart(product);
+      Alert.alert(
+        "Producto agregado",
+        "El carrito fue sincronizado con el backend.",
+      );
+    } catch (err) {
+      Alert.alert(
+        "No se pudo agregar",
+        err.message || "Error al actualizar carrito",
+      );
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <EmptyState message={error} />;
   }
 
   if (products.length === 0) {
@@ -32,11 +49,9 @@ export default function CatalogScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Luces de fondo (Glows) ambientales de tu kit de diseño */}
       <View style={styles.glowBlue} />
       <View style={styles.glowPurple} />
 
-      {/* Contenedor de la barra de búsqueda flotante */}
       <View style={styles.searchContainer}>
         <SearchBar
           value={search}
@@ -45,7 +60,6 @@ export default function CatalogScreen({ navigation }) {
         />
       </View>
 
-      {/* Renderizado condicional de la lista o estado vacío */}
       <View style={styles.content}>
         {filteredProducts.length === 0 ? (
           <EmptyState message="No hay resultados" />
@@ -53,7 +67,7 @@ export default function CatalogScreen({ navigation }) {
           <ProductList
             products={filteredProducts}
             navigation={navigation}
-            addToCart={addToCart}
+            addToCart={handleAddToCart}
           />
         )}
       </View>
@@ -97,7 +111,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 4, 
+    paddingHorizontal: 4,
     zIndex: 10,
   },
 });
