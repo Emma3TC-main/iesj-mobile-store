@@ -10,18 +10,22 @@ import OrdersProvider from "./src/context/OrdersContext";
 
 import AppNavigator from "./src/navigation/AppNavigator";
 
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
 export default function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <FavoritesProvider>
-          <OrdersProvider>
-            <NavigationContainer>
-              <AppNavigator />
-            </NavigationContainer>
-          </OrdersProvider>
-        </FavoritesProvider>
-      </CartProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <CartProvider>
+          <FavoritesProvider>
+            <OrdersProvider>
+              <NavigationContainer>
+                <AppNavigator />
+              </NavigationContainer>
+            </OrdersProvider>
+          </FavoritesProvider>
+        </CartProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

@@ -18,10 +18,19 @@ export default function CheckoutScreen({ navigation }) {
       const order = await createOrder("PAYPAL_SANDBOX");
       await clearCart();
       await refreshCart();
-      await scheduleOrderNotification(order.id);
 
+      const notificationOk = await scheduleOrderNotification(order.id);
+
+      if (!notificationOk) {
+        Alert.alert(
+          "Notificación no programada",
+          "No se pudo programar la notificación de la orden. Asegúrate de que las notificaciones estén habilitadas en la configuración de tu dispositivo.",
+        );
+      }
       Alert.alert("Compra realizada correctamente");
       navigation.navigate("Orders");
+
+
     } catch (error) {
       Alert.alert(
         "Error en checkout",
