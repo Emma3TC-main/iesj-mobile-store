@@ -1,43 +1,55 @@
 import { createContext, useEffect, useState } from "react";
-
-import { getOrders, saveOrders } from "../services/ordersStorage";
+import {
+  createOrder as createOrderRequest,
+  getOrdersRequest,
+} from "../api/ordersApi";
+import { processPaymentRequest } from "../api/paymentsApi";
+import { useAuth } from "../hooks/useAuth";
 
 export const OrdersContext = createContext();
 
 export default function OrdersProvider({ children }) {
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [ordersError, setOrdersError] = useState("");
 
   useEffect(() => {
-    loadOrders();
-  }, []);
-
-  useEffect(() => {
-    saveOrders(orders);
-  }, [orders]);
+    if (user) {
+      loadOrders();
+    } else {
+      setOrders([]);
+    }
+  }, [user]);
 
   const loadOrders = async () => {
-    const data = await getOrders();
-
-    setOrders(data);
+    try {
+      setLoadingOrders(true);
+      setOrdersError("");
+      const data = await getOrdersRequest();
+      setOrders(data);
+    } catch (error) {
+      setOrdersError(error.message);
+    } finally {
+      setLoadingOrders(false);
+    }
   };
 
-  const createOrder = (items, total) => {
-    const newOrder = {
-      id: Date.now(),
-      date: new Date().toISOString(),
-      items,
-      total,
-      status: "Procesando",
-    };
-
-    setOrders((prev) => [newOrder, ...prev]);
+  const createOrder = async (metodoPago = "PAYPAL_SANDBOX") => {
+    const order = await createOrderRequest(metodoPago);
+    await processPaymentRequest(order.id, metodoPago);
+    await loadOrders();
+    return order;
   };
 
   return (
     <OrdersContext.Provider
       value={{
         orders,
+        loadingOrders,
+        ordersError,
         createOrder,
+        loadOrders,
       }}
     >
       {children}

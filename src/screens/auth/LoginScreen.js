@@ -29,10 +29,10 @@ export default function LoginScreen({ navigation }) {
 
     try {
       const response = await loginRequest(email, password);
-      await login(response.user);
+      await login(response);
       navigation.replace("Main");
     } catch (error) {
-      Alert.alert(error);
+      Alert.alert("Error de inicio de sesión", error.message || String(error));
     }
   };
 

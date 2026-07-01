@@ -1,22 +1,23 @@
-import { products } from "../constants/mockData";
+import { apiClient } from "./apiClient";
+import { mapProductFromApi } from "./mappers";
 
 export const getProducts = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(products);
-    }, 1000);
-  });
+  const { data } = await apiClient.get("/products");
+  return data.map(mapProductFromApi);
 };
 
 export const getProductById = async (id) => {
-  return products.find((product) => product.id === id);
+  const { data } = await apiClient.get(`/products/${id}`);
+  return mapProductFromApi(data);
 };
 
 export const getProductsByCategory = async (category) => {
+  const products = await getProducts();
   return products.filter((product) => product.category === category);
 };
 
 export const searchProducts = async (query) => {
+  const products = await getProducts();
   return products.filter((product) =>
     product.name.toLowerCase().includes(query.toLowerCase()),
   );

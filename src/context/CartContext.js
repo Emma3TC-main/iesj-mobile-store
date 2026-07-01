@@ -1,121 +1,109 @@
-import { createContext, useEffect, useState } from "react";
-import { getCart, saveCart } from "../services/cartStorage";
-import { useMemo } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
+import {
+  clearCartRequest,
+  getCartRequest,
+  removeCartItemRequest,
+  updateCartRequest,
+} from "../api/cartApi";
+import { useAuth } from "../hooks/useAuth";
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  const { user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
+  const [loadingCart, setLoadingCart] = useState(false);
+  const [cartError, setCartError] = useState("");
 
   useEffect(() => {
-    loadCart();
-  }, []);
+    if (user) {
+      refreshCart();
+    } else {
+      setCartItems([]);
+    }
+  }, [user]);
 
-  useEffect(() => {
-    saveCart(cartItems);
-  }, [cartItems]);
+  const applyCart = (cart) => {
+    setCartItems(cart?.items || []);
+  };
 
-  const loadCart = async () => {
-    const savedCart = await getCart();
-
-    if (savedCart) {
-      setCartItems(savedCart);
+  const refreshCart = async () => {
+    try {
+      setLoadingCart(true);
+      setCartError("");
+      const cart = await getCartRequest();
+      applyCart(cart);
+    } catch (error) {
+      setCartError(error.message);
+    } finally {
+      setLoadingCart(false);
     }
   };
 
-  const addToCart = (product) => {
+  const addToCart = async (product) => {
     const existingItem = cartItems.find((item) => item.id === product.id);
+    const nextQuantity = existingItem ? existingItem.quantity + 1 : 1;
 
-    if (existingItem) {
-      if (existingItem.quantity >= product.stock) {
-        return;
-      }
-
-      const updatedCart = cartItems.map((item) => {
-        if (item.id === product.id) {
-          return {
-            ...item,
-            quantity: item.quantity + 1,
-          };
-        }
-
-        return item;
-      });
-
-      setCartItems(updatedCart);
-
+    if (nextQuantity > product.stock) {
+      setCartError("Stock insuficiente para este producto");
       return;
     }
 
-    setCartItems([
-      ...cartItems,
-      {
-        ...product,
-        quantity: 1,
-      },
-    ]);
+    const cart = await updateCartRequest(product.id, nextQuantity);
+    applyCart(cart);
   };
 
-  const increaseQuantity = (id) => {
-    const updated = cartItems.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          quantity: item.quantity + 1,
-        };
-      }
+  const increaseQuantity = async (id) => {
+    const item = cartItems.find((entry) => entry.id === id);
+    if (!item) return;
 
-      return item;
-    });
-
-    setCartItems(updated);
+    const cart = await updateCartRequest(id, item.quantity + 1);
+    applyCart(cart);
   };
 
-  const decreaseQuantity = (id) => {
-    const updated = cartItems
-      .map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            quantity: item.quantity - 1,
-          };
-        }
+  const decreaseQuantity = async (id) => {
+    const item = cartItems.find((entry) => entry.id === id);
+    if (!item) return;
 
-        return item;
-      })
-      .filter((item) => item.quantity > 0);
+    if (item.quantity <= 1) {
+      await removeFromCart(id);
+      return;
+    }
 
-    setCartItems(updated);
+    const cart = await updateCartRequest(id, item.quantity - 1);
+    applyCart(cart);
   };
 
   const removeFromCart = async (productId) => {
-    const updatedCart = cartItems.filter((item) => item.id !== productId);
-
-    setCartItems(updatedCart);
-
-    await saveCart(updatedCart);
+    const cart = await removeCartItemRequest(productId);
+    applyCart(cart);
   };
 
   const clearCart = async () => {
-    setCartItems([]);
-
-    await saveCart([]);
+    const cart = await clearCartRequest();
+    applyCart(cart);
   };
 
   const total = useMemo(() => {
-    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    return cartItems.reduce(
+      (acc, item) => acc + Number(item.price || 0) * Number(item.quantity || 0),
+      0,
+    );
   }, [cartItems]);
 
   return (
     <CartContext.Provider
       value={{
         cartItems,
+        loadingCart,
+        cartError,
         addToCart,
         removeFromCart,
         total,
         increaseQuantity,
         decreaseQuantity,
         clearCart,
+        refreshCart,
       }}
     >
       {children}

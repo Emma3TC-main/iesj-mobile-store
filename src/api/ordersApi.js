@@ -1,10 +1,12 @@
-export const createOrder = async (orderData) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        success: true,
-        order: orderData,
-      });
-    }, 1000);
-  });
+import { apiClient } from "./apiClient";
+import { mapOrderFromApi } from "./mappers";
+
+export const getOrdersRequest = async () => {
+  const { data } = await apiClient.get("/orders");
+  return data.map(mapOrderFromApi);
+};
+
+export const createOrder = async (metodoPago = "PAYPAL_SANDBOX") => {
+  const { data } = await apiClient.post("/orders", { metodoPago });
+  return mapOrderFromApi(data);
 };

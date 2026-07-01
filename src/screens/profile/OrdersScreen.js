@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useOrders } from "../../hooks/useOrders";
 import ScreenContainer from "../../components/layout/ScreenContainer";
 import EmptyState from "../../components/common/EmptyState";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 import { formatCurrency } from "../../utils/currency";
 import { formatDate } from "../../utils/helpers";
@@ -13,7 +14,19 @@ import colors from "../../constants/colors";
 import theme from "../../constants/theme";
 
 export default function OrdersScreen() {
-  const { orders } = useOrders();
+  const { orders, loadingOrders, ordersError } = useOrders();
+
+  if (loadingOrders) {
+    return <LoadingSpinner />;
+  }
+
+  if (ordersError) {
+    return (
+      <ScreenContainer>
+        <EmptyState message={ordersError} />
+      </ScreenContainer>
+    );
+  }
 
   if (orders.length === 0) {
     return (

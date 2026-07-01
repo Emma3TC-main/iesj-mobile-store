@@ -1,39 +1,61 @@
+import { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
+import { getProductById } from "../../api/productsApi";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
+import EmptyState from "../../components/common/EmptyState";
 
-import { products } from "../../constants/mockData";
-
-// Importación del sistema de diseño unificado
 import colors from "../../constants/colors";
 import theme from "../../constants/theme";
 
 export default function ProductDetailScreen({ route }) {
   const { productId } = route.params;
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const product = products.find((item) => item.id === productId);
+  useEffect(() => {
+    loadDetail();
+  }, [productId]);
+
+  const loadDetail = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const data = await getProductById(productId);
+      setProduct(data);
+    } catch (err) {
+      setError(err.message || "No se pudo cargar el producto");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <LoadingSpinner />;
+  if (error || !product)
+    return <EmptyState message={error || "Producto no encontrado"} />;
 
   return (
-    <ScrollView 
-      style={styles.container} 
+    <ScrollView
+      style={styles.container}
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
     >
-      {/* Luces de fondo (Glows) decorativas de tu UI Kit */}
       <View style={styles.glowBlue} />
       <View style={styles.glowPurple} />
 
-      {/* Contenedor de la Imagen */}
       <View style={styles.imageContainer}>
         <Image source={{ uri: product.image }} style={styles.image} />
       </View>
 
-      {/* Tarjeta de Información del Producto */}
       <View style={styles.card}>
         <Text style={styles.title}>{product.name}</Text>
 
         <View style={styles.priceRow}>
           <Text style={styles.currency}>S/</Text>
-          <Text style={styles.price}>{product.price}</Text>
+          <Text style={styles.price}>{product.price.toFixed(2)}</Text>
         </View>
+
+        <Text style={styles.stock}>Stock disponible: {product.stock}</Text>
 
         <View style={styles.divider} />
 
@@ -110,7 +132,7 @@ const styles = StyleSheet.create({
   priceRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    marginBottom: 16,
+    marginBottom: 10,
   },
   currency: {
     color: colors.primaryLight || "#3b82f6",
@@ -124,6 +146,11 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "800",
     lineHeight: 36,
+  },
+  stock: {
+    color: colors.textSecondary || "#cbd5e1",
+    fontSize: 14,
+    fontWeight: "600",
   },
   divider: {
     height: 1,

@@ -40,7 +40,7 @@ export default function RegisterScreen({ navigation }) {
       Alert.alert("Usuario registrado correctamente");
       navigation.goBack();
     } catch (error) {
-      Alert.alert(error);
+      Alert.alert("Error de registro", error.message || String(error));
     }
   };
 

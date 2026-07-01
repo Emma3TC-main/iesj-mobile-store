@@ -46,7 +46,9 @@ export default function ProductCard({ product, onPress, onAddToCart }) {
         <View style={styles.priceRow}>
           <Text style={styles.currency}>S/</Text>
 
-          <Text style={styles.price}>{product.price}</Text>
+          <Text style={styles.price}>
+            {Number(product.price || 0).toFixed(2)}
+          </Text>
         </View>
 
         <View style={styles.buttons}>
