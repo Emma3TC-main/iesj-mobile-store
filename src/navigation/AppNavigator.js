@@ -1,14 +1,10 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 import { useAuth } from "../hooks/useAuth";
-
 import AuthNavigator from "./AuthNavigator";
-import BottomTabs from "./BottomTabs";
-
-import ProductDetailScreen from "../screens/products/ProductDetailScreen";
-import CheckoutScreen from "../screens/cart/CheckoutScreen";
-import OrdersScreen from "../screens/profile/OrdersScreen";
+import CustomerNavigator from "./CustomerNavigator";
+import AdminNavigator from "./AdminNavigator";
 import colors from "../constants/colors";
 
 const Stack = createNativeStackNavigator();
@@ -31,32 +27,16 @@ function BootScreen() {
 export default function AppNavigator() {
   const { user, booting } = useAuth();
 
-  if (booting) {
-    return <BootScreen />;
-  }
+  if (booting) return <BootScreen />;
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!user ? (
-        <Stack.Screen
-          name="Auth"
-          component={AuthNavigator}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="Auth" component={AuthNavigator} />
+      ) : user.role === "ADMIN" ? (
+        <Stack.Screen name="Admin" component={AdminNavigator} />
       ) : (
-        <>
-          <Stack.Screen
-            name="Main"
-            component={BottomTabs}
-            options={{ headerShown: false }}
-          />
-
-          <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
-
-          <Stack.Screen name="Checkout" component={CheckoutScreen} />
-
-          <Stack.Screen name="Orders" component={OrdersScreen} />
-        </>
+        <Stack.Screen name="Customer" component={CustomerNavigator} />
       )}
     </Stack.Navigator>
   );

@@ -16,7 +16,7 @@ export const CartProvider = ({ children }) => {
   const [cartError, setCartError] = useState("");
 
   useEffect(() => {
-    if (user) {
+    if (user?.role === "CLIENT") {
       refreshCart();
     } else {
       setCartItems([]);

@@ -45,7 +45,8 @@
       "expo-font",
       "expo-camera",
       "expo-location",
-      "expo-notifications"
+      "expo-notifications",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": false

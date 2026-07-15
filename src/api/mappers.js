@@ -11,11 +11,12 @@ export const mapUserFromApi = (usuario = {}) => ({
 export const mapProductFromApi = (producto = {}) => ({
   id: producto.idProducto,
   name: producto.nombre,
-  description: producto.descripcion,
+  description: producto.descripcion || "",
   price: Number(producto.precio || 0),
   stock: Number(producto.stock || 0),
   image: producto.imagen || FALLBACK_IMAGE,
-  active: producto.estado,
+  barcode: producto.codigoBarras || "",
+  active: Boolean(producto.estado),
   category: "hardware",
 });
 
@@ -35,9 +36,14 @@ export const mapCartFromApi = (cart = {}) => ({
 
 export const mapOrderFromApi = (order = {}) => ({
   id: order.idPedido,
+  userId: order.idUsuario,
+  customerName: order.clienteNombre || "Cliente",
+  customerEmail: order.clienteEmail || "",
   date: order.fecha,
+  reservationExpiresAt: order.reservaExpiraEn,
   total: Number(order.total || 0),
   status: order.estado,
+  paymentStatus: order.estadoPago,
   items: (order.detalles || []).map((item) => ({
     id: item.idProducto,
     name: item.nombreProducto,
