@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { meRequest } from "../api/authApi";
+import { registerUnauthorizedHandler } from "../api/apiClient";
 import {
   getUserSession,
   removeUserSession,
@@ -17,6 +18,13 @@ export const AuthProvider = ({ children }) => {
     loadSession();
   }, []);
 
+  useEffect(() => {
+    return registerUnauthorizedHandler(() => {
+      setUser(null);
+      setToken(null);
+    });
+  }, []);
+
   const loadSession = async () => {
     try {
       const session = await getUserSession();
@@ -25,7 +33,6 @@ export const AuthProvider = ({ children }) => {
         setToken(session.token);
         setUser(session.user);
 
-        // Validación real del JWT contra el backend.
         const freshUser = await meRequest();
         setUser(freshUser);
         await saveUserSession({ token: session.token, user: freshUser });
@@ -52,15 +59,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        booting,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, token, booting, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

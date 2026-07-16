@@ -1,17 +1,13 @@
-import { Text, View, StyleSheet, ScrollView } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../hooks/useCart";
 import { useFavorites } from "../../hooks/useFavorites";
 import { useOrders } from "../../hooks/useOrders";
-
 import CustomButton from "../../components/common/CustomButton";
 import ScreenContainer from "../../components/layout/ScreenContainer";
-
 import { formatCurrency } from "../../utils/currency";
-
-// Importación del sistema de diseño unificado
 import colors from "../../constants/colors";
 import theme from "../../constants/theme";
 
@@ -20,26 +16,79 @@ export default function ProfileScreen({ navigation }) {
   const { cartItems, total } = useCart();
   const { favorites } = useFavorites();
   const { orders } = useOrders();
+  const isAdmin = user?.role === "ADMIN";
+  const userInitial = user?.name?.charAt(0).toUpperCase() || "U";
 
-  // Extrae la inicial para el Avatar visual decorativo
-  const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : "U";
+  const customerStats = [
+    {
+      icon: "cart-outline",
+      label: "Productos",
+      value: cartItems.length,
+      color: colors.primaryLight,
+    },
+    {
+      icon: "wallet-outline",
+      label: "Total carrito",
+      value: formatCurrency(total),
+      color: colors.success,
+    },
+    {
+      icon: "heart-outline",
+      label: "Favoritos",
+      value: favorites.length,
+      color: "#f43f5e",
+    },
+    {
+      icon: "package-variant-closed",
+      label: "Órdenes",
+      value: orders.length,
+      color: colors.warning,
+    },
+  ];
+
+  const adminStats = [
+    {
+      icon: "shield-account-outline",
+      label: "Rol",
+      value: "Administrador",
+      color: colors.primaryLight,
+    },
+    {
+      icon: "database-lock-outline",
+      label: "Acceso",
+      value: "RBAC",
+      color: colors.success,
+    },
+    {
+      icon: "credit-card-check-outline",
+      label: "Pagos",
+      value: "PayPal",
+      color: colors.warning,
+    },
+    {
+      icon: "cellphone-cog",
+      label: "Panel",
+      value: "Móvil",
+      color: colors.accentLight,
+    },
+  ];
+
+  const stats = isAdmin ? adminStats : customerStats;
 
   return (
     <ScreenContainer style={styles.container}>
-      {/* Luces de fondo (Glows) ambientales */}
       <View style={styles.glowBlue} />
       <View style={styles.glowPurple} />
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Cabecera de la Pantalla */}
         <View style={styles.header}>
-          <Text style={styles.title}>Mi Perfil</Text>
+          <Text style={styles.title}>
+            {isAdmin ? "Perfil administrativo" : "Mi perfil"}
+          </Text>
         </View>
 
-        {/* Tarjeta de Identidad de Usuario (Avatar + Datos) */}
         <View style={styles.userCard}>
           <View style={styles.avatarContainer}>
             <Text style={styles.avatarText}>{userInitial}</Text>
@@ -49,71 +98,47 @@ export default function ProfileScreen({ navigation }) {
               {user?.name || "Usuario"}
             </Text>
             <Text style={styles.userEmail} numberOfLines={1}>
-              {user?.email || "correo@ejemplo.com"}
+              {user?.email || ""}
             </Text>
+            <View style={styles.roleBadge}>
+              <Text style={styles.roleText}>{user?.role || "CLIENT"}</Text>
+            </View>
           </View>
         </View>
 
-        {/* Panel de Estadísticas y Métricas en grid estilizado */}
         <View style={styles.statsCard}>
-          <Text style={styles.sectionTitle}>Resumen de Actividad</Text>
-
+          <Text style={styles.sectionTitle}>
+            {isAdmin ? "SEGURIDAD Y OPERACIÓN" : "RESUMEN DE ACTIVIDAD"}
+          </Text>
           <View style={styles.statsGrid}>
-            {/* Ítem Carrito */}
-            <View style={styles.statItem}>
-              <MaterialCommunityIcons
-                name="cart-outline"
-                size={22}
-                color={colors.primaryLight}
-              />
-              <Text style={styles.statLabel}>Productos</Text>
-              <Text style={styles.statValue}>{cartItems.length}</Text>
-            </View>
-
-            {/* Ítem Total Estimado */}
-            <View style={styles.statItem}>
-              <MaterialCommunityIcons
-                name="wallet-outline"
-                size={22}
-                color="#10b981"
-              />
-              <Text style={styles.statLabel}>Total Carrito</Text>
-              <Text style={styles.statValue} numberOfLines={1}>
-                {formatCurrency(total)}
-              </Text>
-            </View>
-
-            {/* Ítem Favoritos */}
-            <View style={styles.statItem}>
-              <MaterialCommunityIcons
-                name="heart-outline"
-                size={22}
-                color="#f43f5e"
-              />
-              <Text style={styles.statLabel}>Favoritos</Text>
-              <Text style={styles.statValue}>{favorites.length}</Text>
-            </View>
-
-            {/* Ítem Órdenes */}
-            <View style={styles.statItem}>
-              <MaterialCommunityIcons
-                name="package-variant-closed"
-                size={22}
-                color="#f59e0b"
-              />
-              <Text style={styles.statLabel}>Órdenes</Text>
-              <Text style={styles.statValue}>{orders.length}</Text>
-            </View>
+            {stats.map((stat) => (
+              <View style={styles.statItem} key={stat.label}>
+                <MaterialCommunityIcons
+                  name={stat.icon}
+                  size={22}
+                  color={stat.color}
+                />
+                <Text style={styles.statLabel}>{stat.label}</Text>
+                <Text style={styles.statValue} numberOfLines={1}>
+                  {stat.value}
+                </Text>
+              </View>
+            ))}
           </View>
         </View>
 
-        {/* Sección de Acciones y Botones con separación limpia */}
         <View style={styles.actionContainer}>
-          <CustomButton
-            title="Ver órdenes"
-            onPress={() => navigation.navigate("Orders")}
-            variant="primary"
-          />
+          {isAdmin ? (
+            <CustomButton
+              title="Volver al resumen"
+              onPress={() => navigation.navigate("Resumen")}
+            />
+          ) : (
+            <CustomButton
+              title="Ver órdenes"
+              onPress={() => navigation.navigate("Orders")}
+            />
+          )}
           <View style={styles.buttonSpacer} />
           <CustomButton
             title="Cerrar sesión"
@@ -127,14 +152,8 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surface || "#0f172a",
-    position: "relative",
-  },
-  scrollContent: {
-    paddingBottom: 40,
-  },
+  container: { flex: 1, backgroundColor: colors.surface, position: "relative" },
+  scrollContent: { paddingBottom: 40 },
   glowBlue: {
     position: "absolute",
     width: 220,
@@ -143,7 +162,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.glowBlue,
     top: -50,
     right: -40,
-    zIndex: 0,
     opacity: 0.4,
   },
   glowPurple: {
@@ -154,80 +172,60 @@ const styles = StyleSheet.create({
     backgroundColor: colors.glowPurple,
     bottom: 40,
     left: -50,
-    zIndex: 0,
     opacity: 0.3,
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 16,
-    zIndex: 10,
-  },
-  title: {
-    color: colors.white || "#ffffff",
-    fontSize: 28,
-    fontWeight: "800",
-    letterSpacing: -0.5,
-  },
+  header: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 16 },
+  title: { color: colors.white, fontSize: 28, fontWeight: "900" },
   userCard: {
-    backgroundColor: colors.card || "#1e293b",
+    backgroundColor: colors.card,
     marginHorizontal: 20,
     marginBottom: 20,
-    borderRadius: theme.radius?.xl || 16,
+    borderRadius: theme.radius.xl,
     borderWidth: 1,
-    borderColor: colors.border || "rgba(255,255,255,0.1)",
+    borderColor: colors.border,
     padding: 20,
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
-    zIndex: 10,
     ...theme.shadow,
   },
   avatarContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primaryLight || "#3b82f6",
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.2)",
   },
-  avatarText: {
-    color: colors.white || "#ffffff",
-    fontSize: 22,
-    fontWeight: "800",
+  avatarText: { color: colors.white, fontSize: 23, fontWeight: "900" },
+  userInfo: { flex: 1, gap: 3 },
+  userName: { color: colors.white, fontSize: 18, fontWeight: "800" },
+  userEmail: { color: colors.textSecondary, fontSize: 13 },
+  roleBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: colors.glowBlue,
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    marginTop: 5,
   },
-  userInfo: {
-    flex: 1,
-    gap: 4,
-  },
-  userName: {
-    color: colors.white || "#ffffff",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  userEmail: {
-    color: colors.text || "#94a3b8",
-    fontSize: 14,
-    fontWeight: "400",
-  },
+  roleText: { color: colors.primaryLight, fontSize: 10, fontWeight: "900" },
   statsCard: {
-    backgroundColor: colors.card || "#1e293b",
+    backgroundColor: colors.card,
     marginHorizontal: 20,
     marginBottom: 26,
-    borderRadius: theme.radius?.xl || 16,
+    borderRadius: theme.radius.xl,
     borderWidth: 1,
-    borderColor: colors.border || "rgba(255,255,255,0.1)",
+    borderColor: colors.border,
     padding: 20,
-    zIndex: 10,
     ...theme.shadow,
   },
   sectionTitle: {
-    color: colors.primaryLight || "#3b82f6",
-    fontSize: 12,
-    fontWeight: "700",
-    textTransform: "uppercase",
+    color: colors.primaryLight,
+    fontSize: 11,
+    fontWeight: "900",
     letterSpacing: 1,
     marginBottom: 16,
   },
@@ -238,31 +236,21 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   statItem: {
-    width: "47%", // Permite maquetar en 2 columnas perfectas con espacio en el medio
-    backgroundColor: "rgba(15, 23, 42, 0.4)",
-    borderRadius: theme.radius?.lg || 12,
+    width: "47%",
+    backgroundColor: "rgba(15,23,42,0.4)",
+    borderRadius: theme.radius.lg,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.05)",
+    borderColor: colors.border,
     padding: 14,
-    alignItems: "flex-start",
     gap: 4,
   },
   statLabel: {
-    color: colors.text || "#94a3b8",
-    fontSize: 12,
-    fontWeight: "500",
+    color: colors.textSecondary,
+    fontSize: 11,
+    fontWeight: "600",
     marginTop: 4,
   },
-  statValue: {
-    color: colors.white || "#ffffff",
-    fontSize: 16,
-    fontWeight: "800",
-  },
-  actionContainer: {
-    paddingHorizontal: 20,
-    zIndex: 10,
-  },
-  buttonSpacer: {
-    height: 12, // Maneja de forma limpia el espacio intermedio entre los botones personalizados
-  },
+  statValue: { color: colors.white, fontSize: 15, fontWeight: "900" },
+  actionContainer: { paddingHorizontal: 20 },
+  buttonSpacer: { height: 12 },
 });

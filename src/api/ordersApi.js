@@ -10,3 +10,8 @@ export const createOrder = async (metodoPago = "PAYPAL_SANDBOX") => {
   const { data } = await apiClient.post("/orders", { metodoPago });
   return mapOrderFromApi(data);
 };
+
+export const cancelOrderRequest = async (orderId) => {
+  const { data } = await apiClient.post(`/orders/${orderId}/cancel`);
+  return mapOrderFromApi(data);
+};

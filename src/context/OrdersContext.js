@@ -1,9 +1,9 @@
 import { createContext, useEffect, useState } from "react";
 import {
+  cancelOrderRequest,
   createOrder as createOrderRequest,
   getOrdersRequest,
 } from "../api/ordersApi";
-import { processPaymentRequest } from "../api/paymentsApi";
 import { useAuth } from "../hooks/useAuth";
 
 export const OrdersContext = createContext();
@@ -15,7 +15,7 @@ export default function OrdersProvider({ children }) {
   const [ordersError, setOrdersError] = useState("");
 
   useEffect(() => {
-    if (user) {
+    if (user?.role === "CLIENT") {
       loadOrders();
     } else {
       setOrders([]);
@@ -23,11 +23,12 @@ export default function OrdersProvider({ children }) {
   }, [user]);
 
   const loadOrders = async () => {
+    if (user?.role !== "CLIENT") return;
+
     try {
       setLoadingOrders(true);
       setOrdersError("");
-      const data = await getOrdersRequest();
-      setOrders(data);
+      setOrders(await getOrdersRequest());
     } catch (error) {
       setOrdersError(error.message);
     } finally {
@@ -35,11 +36,16 @@ export default function OrdersProvider({ children }) {
     }
   };
 
-  const createOrder = async (metodoPago = "PAYPAL_SANDBOX") => {
+  const createPendingOrder = async (metodoPago = "PAYPAL_SANDBOX") => {
     const order = await createOrderRequest(metodoPago);
-    await processPaymentRequest(order.id, metodoPago);
     await loadOrders();
     return order;
+  };
+
+  const cancelPendingOrder = async (orderId) => {
+    const cancelled = await cancelOrderRequest(orderId);
+    await loadOrders();
+    return cancelled;
   };
 
   return (
@@ -48,7 +54,8 @@ export default function OrdersProvider({ children }) {
         orders,
         loadingOrders,
         ordersError,
-        createOrder,
+        createPendingOrder,
+        cancelPendingOrder,
         loadOrders,
       }}
     >
