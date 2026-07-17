@@ -500,17 +500,6 @@ docs/demo-credentials.local.md
 
 # 🔒 Consideraciones de seguridad
 
-Esta sección debe colocarse cerca del final de ambos README, antes de:
-
-```markdown
-# Estado del proyecto
-```
-
-o antes de:
-
-```markdown
-# Autores
-```
 
 El proyecto implementa medidas de seguridad adecuadas para un MVP académico, incluyendo:
 
