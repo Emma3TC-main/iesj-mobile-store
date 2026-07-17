@@ -1520,16 +1520,22 @@ docs/engineering-workflow.md
 
 # 🔗 Enlaces del proyecto
 
-* **Informe PDF:**
-  https://utpedupe-my.sharepoint.com/:b:/g/personal/u22329385_utp_edu_pe/IQCc_rkXCMPiSbOGelAoHWEcAdREcekwFJoepq2OpIYI8Kc?e=GNLwcQ
+* **Repositorio Mobile:**
+  https://github.com/Emma3TC-main/iesj-mobile-store.git
 
-* **Informe Word:**
-  https://utpedupe-my.sharepoint.com/:w:/g/personal/u22329385_utp_edu_pe/IQCIigPowMa-TYmNC9IyiNUJAQ-6cubL381_XOwFe-tEoT8?e=9N80Be
+* **Repositorio Backend:**
+  https://github.com/Emma3TC-main/iesj-mobile-store-backend.git
+
+* **Build de la aplicación — Expo EAS:**
+  https://expo.dev/accounts/emma3tc/projects/iesj-mobile-store/builds/ff6badb2-08c3-486e-b844-07e7de0eeac9
 
 * **Diapositivas:**
-  https://canva.link/x7hubid7qltk94q
+  https://canva.link/d52h0nq1uq17vho
 
-* **Prototipo Figma:**
+* **Informe final en PDF:**
+  https://utpedupe-my.sharepoint.com/:b:/g/personal/u22329385_utp_edu_pe/IQBrS7Sp3z_OQbZtK-Qp_DzvAaptb-eCeS4452c6s0qOUW4?e=61iqDs
+
+* **Prototipo en Figma:**
   https://www.figma.com/design/JmgiW06u12Y6goMtHF2vDT/iESJ-Webstore?node-id=0-1&t=g4cU7Q0G7vm1JDCp-1
 
 ---
