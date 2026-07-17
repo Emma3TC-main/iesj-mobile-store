@@ -348,6 +348,427 @@ Esas credenciales pertenecen exclusivamente al backend.
 
 ---
 
+# 👤 Primera puesta en marcha y creación de usuarios
+
+La aplicación no debe depender de cuentas administrativas incorporadas directamente en el código fuente.
+
+En una instalación nueva, el procedimiento recomendado es:
+
+1. Configurar el archivo `.env` del backend.
+2. Levantar PostgreSQL o conectar la instancia de Supabase.
+3. Ejecutar las migraciones necesarias.
+4. Cargar el catálogo mediante `data.sql`, si corresponde.
+5. Levantar el backend.
+6. Configurar `EXPO_PUBLIC_API_URL` en la aplicación móvil.
+7. Iniciar la aplicación.
+8. Registrar los usuarios desde la propia aplicación.
+9. Promover una cuenta a `ADMIN` desde Supabase.
+10. Cerrar sesión e iniciar nuevamente para renovar el JWT.
+
+---
+
+## Crear una cuenta de cliente
+
+Desde la pantalla de registro se deben ingresar los siguientes datos:
+
+* Nombre.
+* Correo electrónico.
+* Contraseña.
+
+El backend creará la cuenta inicialmente con el rol:
+
+```text
+CLIENT
+```
+
+Este mismo flujo debe utilizarse para crear la cuenta que posteriormente será promovida a administradora.
+
+---
+
+## Habilitar acceso administrativo
+
+Después de promover la cuenta desde Supabase:
+
+1. Cerrar sesión en la aplicación.
+2. Volver a iniciar sesión.
+3. `AuthContext` recibirá un JWT nuevo.
+4. `AppNavigator` detectará el rol `ADMIN`.
+5. La aplicación mostrará `AdminNavigator`.
+
+No es necesario recompilar la aplicación móvil para modificar el rol de un usuario.
+
+El flujo esperado es:
+
+```text
+Registro desde la aplicación
+        ↓
+Usuario creado como CLIENT
+        ↓
+Actualización del rol en Supabase
+        ↓
+Cerrar sesión
+        ↓
+Volver a iniciar sesión
+        ↓
+JWT actualizado con rol ADMIN
+        ↓
+Acceso al módulo administrativo
+```
+
+---
+
+## Restablecer una sesión antigua
+
+Si el usuario conserva una sesión previa y sigue visualizando la interfaz de cliente:
+
+1. Cerrar sesión desde el perfil.
+2. Cerrar completamente la aplicación.
+3. Abrir nuevamente la aplicación.
+4. Iniciar sesión con la cuenta actualizada.
+
+Durante el desarrollo también puede limpiarse `AsyncStorage` desinstalando la aplicación:
+
+```bash
+adb uninstall com.iesj.mobile.store
+```
+
+Después será necesario volver a instalar la development build.
+
+No se recomienda realizar este procedimiento durante una demostración, salvo que la sesión se encuentre dañada o desactualizada.
+
+---
+
+# 🔐 Manejo de credenciales de prueba
+
+La sección:
+
+```markdown
+# Credenciales de prueba
+```
+
+no debería contener contraseñas reales cuando el repositorio es público.
+
+Se recomienda reemplazarla por:
+
+## 🔐 Cuentas de demostración
+
+Las cuentas de demostración deben crearse en la instancia utilizada para la evaluación.
+
+Por seguridad, las contraseñas no se publican en el repositorio.
+
+Los datos de acceso serán proporcionados de manera privada al docente o evaluador.
+
+Puede utilizarse una tabla sin contraseñas:
+
+| Tipo          | Correo referencial        | Rol      |
+| ------------- | ------------------------- | -------- |
+| Cliente       | `cliente.demo@local.test` | `CLIENT` |
+| Administrador | `admin.demo@local.test`   | `ADMIN`  |
+
+No se debe publicar:
+
+* Correos personales.
+* DNI utilizados como contraseña.
+* Contraseñas reutilizadas.
+* `PAYPAL_CLIENT_SECRET`.
+* `JWT_SECRET`.
+* Contraseñas de Supabase.
+* Tokens JWT.
+* Credenciales de cuentas PayPal Sandbox.
+
+Para una demostración presencial, las credenciales pueden mantenerse en:
+
+* Un documento privado.
+* Un gestor de contraseñas.
+* Una nota local no versionada.
+* Variables de entorno.
+* Un archivo ignorado por Git.
+
+Ejemplo de archivo local:
+
+```text
+docs/demo-credentials.local.md
+```
+
+Agregarlo a `.gitignore`:
+
+```gitignore
+docs/demo-credentials.local.md
+```
+
+---
+
+# 🔒 Consideraciones de seguridad
+
+Esta sección debe colocarse cerca del final de ambos README, antes de:
+
+```markdown
+# Estado del proyecto
+```
+
+o antes de:
+
+```markdown
+# Autores
+```
+
+El proyecto implementa medidas de seguridad adecuadas para un MVP académico, incluyendo:
+
+* Contraseñas procesadas mediante BCrypt.
+* Autenticación mediante JWT.
+* Rutas protegidas con Spring Security.
+* Autorización basada en roles.
+* Validación de propiedad de pedidos.
+* Credenciales PayPal almacenadas únicamente en el backend.
+* Variables sensibles externas al repositorio.
+* Captura PayPal realizada desde el servidor.
+* Validación del estado `COMPLETED`.
+* Idempotencia en la creación y captura de órdenes.
+* Separación entre cuentas cliente y administrador.
+
+Sin embargo, antes de un despliegue comercial deben incorporarse controles adicionales.
+
+---
+
+## Secretos y variables de entorno
+
+Nunca publicar:
+
+```text
+.env
+DB_PASSWORD
+JWT_SECRET
+PAYPAL_CLIENT_SECRET
+Credenciales personales
+Tokens JWT
+Contraseñas de cuentas demo
+```
+
+El repositorio solo debe incluir:
+
+```text
+.env.example
+```
+
+Con valores ficticios:
+
+```env
+DB_PASSWORD=CAMBIAR_PASSWORD
+JWT_SECRET=CAMBIAR_SECRETO
+PAYPAL_CLIENT_ID=CAMBIAR_CLIENT_ID
+PAYPAL_CLIENT_SECRET=CAMBIAR_CLIENT_SECRET
+```
+
+Antes de realizar un commit, comprobar:
+
+```bash
+git status
+git check-ignore .env
+git diff --cached
+```
+
+Buscar accidentalmente secretos dentro del repositorio:
+
+```bash
+git grep -n "PAYPAL_CLIENT_SECRET"
+git grep -n "DB_PASSWORD"
+git grep -n "JWT_SECRET"
+```
+
+Los resultados deben apuntar únicamente a archivos de ejemplo o documentación que utilice placeholders.
+
+---
+
+## JWT
+
+Para producción se recomienda:
+
+* Generar una clave Base64 aleatoria.
+* No reutilizar la clave de desarrollo.
+* Rotar la clave si fue expuesta.
+* Utilizar una expiración razonable.
+* Implementar refresh tokens si el sistema evoluciona.
+* Revocar sesiones comprometidas.
+* No incluir información sensible dentro del payload.
+* Evitar registrar tokens completos en los logs.
+
+Generar una clave segura:
+
+```bash
+openssl rand -base64 64
+```
+
+Ejemplo de configuración:
+
+```env
+JWT_SECRET=VALOR_BASE64_GENERADO
+JWT_EXPIRATION_MS=604800000
+```
+
+---
+
+## PayPal
+
+Durante el desarrollo se utiliza:
+
+```env
+PAYPAL_BASE_URL=https://api-m.sandbox.paypal.com
+```
+
+Para producción real se requiere:
+
+```env
+PAYPAL_BASE_URL=https://api-m.paypal.com
+```
+
+El cambio a PayPal Live solo debe realizarse después de:
+
+* Crear una aplicación Live.
+* Obtener credenciales Live.
+* Validar el dominio y las políticas comerciales.
+* Probar la conciliación de pagos.
+* Implementar webhooks.
+* Revisar el flujo de devoluciones y disputas.
+* Aplicar monitoreo y auditoría.
+* Separar credenciales Sandbox y Live.
+* Verificar el cumplimiento legal y tributario.
+
+Las credenciales Sandbox y Live deben mantenerse completamente separadas.
+
+Nunca colocar en la aplicación móvil:
+
+```text
+PAYPAL_CLIENT_SECRET
+```
+
+El `Client Secret` debe permanecer únicamente en el backend.
+
+---
+
+## Base de datos
+
+Para producción se recomienda:
+
+* Utilizar conexiones cifradas.
+* Mantener `sslmode=require`.
+* Evitar utilizar el usuario propietario para todas las operaciones.
+* Aplicar el principio de privilegios mínimos.
+* Realizar copias de seguridad periódicas.
+* Probar las migraciones antes de ejecutarlas.
+* No utilizar `ddl-auto=update` sin control.
+* Incorporar Flyway o Liquibase si el proyecto continúa.
+* Mantener `SQL_INIT_MODE=never`.
+* Evitar seeds automáticos en producción.
+* No insertar administradores mediante scripts públicos.
+* Restringir el acceso al panel de Supabase.
+
+Configuración recomendada:
+
+```env
+SQL_INIT_MODE=never
+SPRING_PROFILES_ACTIVE=prod
+```
+
+---
+
+## CORS
+
+El valor:
+
+```env
+CORS_ALLOWED_ORIGINS=*
+```
+
+es aceptable únicamente para pruebas controladas del cliente móvil.
+
+Cuando exista un cliente web o un backend público, se recomienda restringirlo:
+
+```env
+CORS_ALLOWED_ORIGINS=https://app.ejemplo.com,https://admin.ejemplo.com
+```
+
+CORS no reemplaza:
+
+* La autenticación JWT.
+* La autorización por roles.
+* La validación de permisos.
+* La protección de endpoints.
+* La verificación de propiedad de recursos.
+
+---
+
+## Dispositivos y ADB
+
+`adb reverse` crea una redirección local entre el teléfono y la computadora.
+
+Debe utilizarse únicamente:
+
+* En dispositivos de confianza.
+* Durante el desarrollo.
+* En conexiones USB controladas.
+* Con la depuración USB habilitada solo mientras sea necesaria.
+
+Al finalizar:
+
+```bash
+adb reverse --remove-all
+```
+
+También se recomienda:
+
+1. Desconectar el cable USB.
+2. Desactivar la depuración USB.
+3. Revocar autorizaciones antiguas si el dispositivo fue conectado a un equipo ajeno.
+4. No dejar sesiones administrativas abiertas.
+
+---
+
+## Registros y logs
+
+No se debe imprimir en los logs:
+
+```text
+Contraseñas
+JWT completos
+Client Secret
+Access tokens de PayPal
+Datos bancarios
+Credenciales de Supabase
+Información personal sensible
+```
+
+En producción deben utilizarse:
+
+* Logs estructurados.
+* Niveles `INFO`, `WARN` y `ERROR`.
+* Identificadores de correlación.
+* Auditoría de acciones administrativas.
+* Enmascaramiento de datos sensibles.
+* Rotación y retención controlada de logs.
+* Alertas ante errores de autenticación o pagos.
+* Monitoreo de intentos repetidos de acceso.
+
+Ejemplo de información que sí puede registrarse:
+
+```text
+ID del pedido
+Estado del pedido
+Código HTTP
+Fecha y hora
+ID de correlación
+Resultado general de la operación
+```
+
+Ejemplo de información que no debe registrarse:
+
+```text
+Bearer eyJhbGciOi...
+PAYPAL_CLIENT_SECRET=...
+DB_PASSWORD=...
+Contraseña ingresada por el usuario
+```
+---
+
 # 🌐 Valores de `EXPO_PUBLIC_API_URL`
 
 ## Dispositivo Android físico mediante USB y ADB Reverse
@@ -1055,32 +1476,6 @@ npx expo-doctor
 ```bash
 npx expo start --dev-client --clear
 ```
-
----
-
-# 🔐 Credenciales de prueba
-
-> Estas cuentas son únicamente para demostración académica. No reutilizar sus contraseñas en otros servicios.
-
-## Clientes
-
-```text
-Correo: centeno2018coaraya@gmail.com
-Contraseña: 73418626
-```
-
-```text
-Correo: tcemmasv@gmail.com
-Contraseña: 73418626
-```
-
-## Administrador
-
-```text
-Correo: admin@admin.com
-Contraseña: 123456
-```
-
 ---
 
 # 🔄 CI/CD
@@ -1170,4 +1565,40 @@ docs/engineering-workflow.md
 * GitHub Actions.
 * Development build Android probada en dispositivo físico.
 
+# ⚠️ Descargo de responsabilidad
 
+**iESJ Mobile Store** es un proyecto académico desarrollado con fines educativos y de demostración técnica.
+
+La integración de PayPal utiliza el entorno **Sandbox**. No procesa dinero real y no debe considerarse una solución comercial lista para producción.
+
+Los productos, precios, usuarios, pedidos, inventario y transacciones utilizados durante las pruebas pueden ser datos ficticios o de demostración.
+
+Los autores no se responsabilizan por:
+
+* El uso del proyecto con credenciales reales sin aplicar medidas de seguridad adicionales.
+* La exposición de secretos causada por una configuración incorrecta.
+* La ejecución de scripts SQL sobre bases de datos que no cuenten con copias de seguridad.
+* El uso del sistema para procesar pagos reales sin validaciones legales, comerciales y técnicas.
+* La pérdida de datos causada por seeds, migraciones o procesos de inicialización ejecutados sin revisión previa.
+* Despliegues que mantengan contraseñas, tokens o claves de ejemplo.
+* El uso de dependencias, integraciones o configuraciones fuera del alcance académico del proyecto.
+
+Antes de utilizar el sistema en un entorno real, se deben implementar como mínimo las siguientes medidas:
+
+* Uso obligatorio de HTTPS.
+* Gestión profesional y centralizada de secretos.
+* Rotación periódica de claves y credenciales.
+* Implementación de webhooks de PayPal.
+* Auditoría de operaciones y acciones administrativas.
+* Protección contra abuso y aplicación de rate limiting.
+* Monitoreo de disponibilidad, errores y transacciones.
+* Copias de seguridad automáticas.
+* Migraciones de base de datos versionadas.
+* Políticas de privacidad.
+* Términos y condiciones de uso.
+* Gestión de devoluciones y reembolsos.
+* Cumplimiento legal, comercial y tributario aplicable.
+
+Las credenciales de ejemplo deben cambiarse inmediatamente en cualquier instalación nueva.
+
+---
