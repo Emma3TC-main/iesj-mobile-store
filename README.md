@@ -289,3 +289,8 @@ El proyecto busca demostrar competencias en:
 
 ```
 
+# Credenciales de prueba
+cuenta cliente 1: centeno2018coaraya@gmail.com 73418626
+cuenta cliente 2: tcemmasv@gmail.com 73418626
+cuenta administrador: admin@admin.com 123456 
+
